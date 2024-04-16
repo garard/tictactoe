@@ -16,9 +16,6 @@ export const useGameLogic = () => {
   ]);
   const [winningCells, setWinningCells] = useState([]);
 
-  const [loadedHistory, setLoadedHistory] = useState();
-
-
   const clearBoard = () => {
     setBoard([
       ["", "", ""],
@@ -30,8 +27,18 @@ export const useGameLogic = () => {
     setHistory([]);
     setUndoHistory([]);
     setGameOver(0);
-    setWinningCells([]);
+    setWinningCells();
   };
+
+  class SaveData {
+    constructor(make, model, year) {
+      this.make = make
+      this.model = model
+      this.year = year
+    }
+  }
+
+
 
   useEffect(() => {
     const gameState = checkState(board, playerTurn);
@@ -60,41 +67,42 @@ export const useGameLogic = () => {
   useEffect(() => {
     const firstLoad = async () => {
       const myData = await loadData();
-      console.log("Save triggered:", JSON.stringify(myData));
-      if (Object.keys(myData).length > 0) {
-        setSavedGames(myData);
-      }
+      console.log("Loaded game data:")
+      console.log(myData);
+      setSavedGames(myData);
     };
     firstLoad();
   }, []);
 
+
+
   useEffect(() => {
     saveData(savedGames);
+    console.log("Save triggered")
+    console.log(savedGames);
   }, [savedGames]);
 
 
   const saveGame = () => {
     const currentDate = new Date();
-    let lowestFreeId = 1;
-
-    // Find the lowest available ID
-    while (savedGames.hasOwnProperty(lowestFreeId.toString())) {
-      lowestFreeId++;
-      console.log(lowestFreeId)
+    const id = () => {
+      if (savedGames) {
+        return (savedGames.length + 1)
+      } else {
+        return 1
+      }
     }
-
-    const newSave = {
-      id: lowestFreeId.toString(),
+    const saveData = {
+      id: id(),
       date: currentDate.toLocaleDateString(),
       time: currentDate.toLocaleTimeString(),
       history: history,
       result: checkState(board, playerTurn),
       turnsTaken: history.length
     };
-
-    const updatedSavedGames = { ...savedGames, [lowestFreeId]: newSave };
-    setSavedGames(updatedSavedGames);
-
+    setSavedGames({ saveData, ...savedGames, });
+    console.log("Savegame triggered")
+    console.log(saveData);
     clearBoard();
     postSave();
   };
@@ -198,21 +206,29 @@ export const useGameLogic = () => {
     board,
     gameOver,
     saveGame,
-    setWinningCells,
-    setSavedGames,
     saveAlert: preSave,
+    history,
     checkState,
     checkWinningCells,
     winningCells,
     checkCellColor,
     clearBoard,
-    loadedHistory,
-    setLoadedHistory,
     placeTurn,
     undoTurn,
     redoTurn,
-    setHistory,
-    setGameOver,
     savedGames,
   };
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
