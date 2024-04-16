@@ -1,20 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Rules, Credits, Home, LoadGame, useGameLogic} from './src/Index'
+
+const Stack = createStackNavigator()
 
 export default function App() {
+  const gameLogic = useGameLogic();
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Home'>
+        
+
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Rules"
+          component={Rules}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Credits"
+          component={Credits}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="LoadGame"
+          component={LoadGame}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
